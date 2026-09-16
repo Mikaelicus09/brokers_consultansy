@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propuesta Ejecutiva: Estabilización Técnica y Autonomía Operativa con IA</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html-to-image for high-resolution exports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+  <!-- jsPDF CDN for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Notion Design System Tokens */
+    :root {
+      --font-notion: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+      --color-primary: #5645d4;
+      --color-primary-pressed: #4534b3;
+      --color-canvas: #ffffff;
+      --color-surface: #f6f5f4;
+      --color-surface-soft: #fafaf9;
+      --color-hairline: #e5e3df;
+      --color-hairline-soft: #ede9e4;
+      --color-hairline-strong: #c8c4be;
+      --color-ink: #1a1a1a;
+      --color-charcoal: #37352f;
+      --color-slate: #5d5b54;
+      --color-steel: #787671;
+      --color-stone: #a4a097;
+      /* Notion Pastel Card Tints */
+      --tint-peach: #ffe8d4;
+      --tint-rose: #fde0ec;
+      --tint-mint: #d9f3e1;
+      --tint-lavender: #e6e0f5;
+      --tint-sky: #dcecfa;
+      --tint-yellow: #fef7d6;
+      --tint-yellow-bold: #f9e79f;
+      --tint-cream: #f8f5e8;
+      --tint-gray: #f0eeec;
+    }
+
+    body {
+      font-family: var(--font-notion);
+      background-color: #f7f6f3;
+      color: var(--color-charcoal);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Fluid responsive container for mobile/tablet/desktop viewing */
+    #slideContent {
+      width: 100%;
+      max-width: 1024px;
+      margin: 0 auto;
+      transition: all 150ms ease;
+    }
+
+    /* Forced 16:9 Canvas ONLY during image export */
+    #slideContent.export-mode-16-9 {
+      width: 1280px !important;
+      height: 720px !important;
+      min-width: 1280px !important;
+      min-height: 720px !important;
+      max-width: 1280px !important;
+      max-height: 720px !important;
+      padding: 2rem !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      border-radius: 0 !important;
+    }
+
+    #slideContent.export-mode-16-9 .slide-grid-mid {
+      display: grid !important;
+      grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+      gap: 1.25rem !important;
+    }
+
+    #slideContent.export-mode-16-9 .slide-left-col {
+      grid-column: span 5 / span 5 !important;
+    }
+
+    #slideContent.export-mode-16-9 .slide-right-col {
+      grid-column: span 7 / span 7 !important;
+    }
+
+    #slideContent.export-mode-16-9 .slide-steps-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 0.75rem !important;
+    }
+
+    /* Notion Tab Styles */
+    .notion-tab {
+      color: var(--color-steel);
+      border-radius: 6px;
+      transition: all 150ms ease;
+      white-space: nowrap;
+    }
+    .notion-tab:hover {
+      background-color: #edeae4;
+      color: var(--color-ink);
+    }
+    .notion-tab.active {
+      background-color: #ffffff;
+      color: var(--color-ink);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+      font-weight: 600;
+    }
+
+    /* Notion Button Styles (8px rectangular) */
+    .btn-notion-primary {
+      background-color: var(--color-primary);
+      color: #ffffff;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background-color 150ms ease;
+    }
+    .btn-notion-primary:hover {
+      background-color: var(--color-primary-pressed);
+    }
+    .btn-notion-secondary {
+      background-color: #ffffff;
+      color: var(--color-ink);
+      border: 1px solid var(--color-hairline-strong);
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 150ms ease;
+    }
+    .btn-notion-secondary:hover {
+      background-color: var(--color-surface);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center selection:bg-[#e6e0f5] selection:text-[#37352f]">
+
+  <!-- Top Workspace Navigation Bar -->
+  <header class="w-full max-w-5xl mx-auto pt-6 pb-4 px-4 sm:px-6 flex flex-col items-start gap-3.5 border-b border-[#e5e3df]">
+    <div class="flex items-center gap-3 w-full">
+      <!-- Notion document icon -->
+      <div class="w-9 h-9 rounded-lg bg-[#f0eeec] border border-[#e5e3df] flex items-center justify-center text-lg select-none shadow-sm shrink-0">
+        📑
+      </div>
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          <h1 class="text-sm sm:text-base font-semibold text-[#1a1a1a] tracking-tight">
+            Consultoría en Eficiencia y Productividad Operativa
+          </h1>
+          <span class="text-[11px] font-medium px-2 py-0.5 rounded text-[#37352f] bg-[#e6e0f5] border border-[#d6b6f6]/40 whitespace-nowrap">
+            Brokerage Inmobiliario
+          </span>
+        </div>
+        <p class="text-xs text-[#787671] mt-0.5">Fase 1: Estabilización Técnica (1 semana) + Fase 2: Autonomía Operativa con IA (8 Semanas)</p>
+      </div>
+    </div>
+
+    <!-- Segmented Navigation located directly underneath Title & Subtitle -->
+    <nav class="flex items-center gap-1 bg-[#edeae4]/70 p-1 rounded-lg border border-[#e5e3df] overflow-x-auto max-w-full">
+      <button onclick="switchTab('resumen')" id="tabBtn-resumen" class="notion-tab active px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 cursor-pointer">
+        <span>🖼️</span> Diapositiva Ejecutiva
+      </button>
+      <button onclick="switchTab('diagnostico')" id="tabBtn-diagnostico" class="notion-tab px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 cursor-pointer">
+        <span>🔍</span> Diagnóstico y Fase 1
+      </button>
+      <button onclick="switchTab('programa')" id="tabBtn-programa" class="notion-tab px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 cursor-pointer">
+        <span>📘</span> Fase 2: Programa y Garantía
+      </button>
+    </nav>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- TAB 1: DIAPOSITIVA EJECUTIVA (RESPONSIVE VIEW & EXPORT)  -->
+  <!-- ======================================================== -->
+  <div id="view-resumen" class="w-full max-w-5xl px-4 sm:px-6 py-4 flex flex-col items-center">
+    
+    <!-- Action Toolbar -->
+    <div class="w-full mb-3 flex flex-wrap items-center justify-between gap-2.5">
+      <span class="text-xs text-[#787671] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-[#1aae39]"></span>
+        Vista ejecutiva adaptable y exportable
+      </span>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btnCopyText" class="btn-notion-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 cursor-pointer shadow-sm">
+          <svg class="w-3.5 h-3.5 text-[#787671]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          Copiar Resumen
+        </button>
+
+        <button id="btnExportPng" class="btn-notion-primary text-xs py-1.5 px-4 flex items-center gap-1.5 cursor-pointer shadow-sm">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Descargar PNG
+        </button>
+
+        <button id="btnExportJpg" class="btn-notion-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 cursor-pointer shadow-sm">
+          Descargar JPG
+        </button>
+
+        <button id="btnExportPdf" class="btn-notion-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 cursor-pointer shadow-sm">
+          <svg class="w-3.5 h-3.5 text-[#e03131]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          Descargar PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Fluid, fully responsive slide on mobile and tablet -->
+    <main class="w-full">
+      <div id="slideContent" class="bg-[#ffffff] text-[#37352f] flex flex-col justify-between p-5 sm:p-7 rounded-xl border border-[#e5e3df] shadow-sm overflow-hidden">
+        
+        <!-- Header -->
+        <section class="border-b border-[#e5e3df] pb-4 mb-5">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f6f5f4] border border-[#e5e3df] text-[#5d5b54] text-xs font-medium mb-2">
+                <span>🏢</span>
+                <span>Consultoría en Eficiencia y Productividad Operativa</span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-[#1a1a1a] leading-tight">
+                Programa de Estabilización y Autonomía Operativa con IA
+              </h2>
+              <p class="text-sm text-[#5d5b54] mt-1 leading-relaxed">
+                Flujos de corretaje, integridad de datos en Sheets (Data Guards) y herramientas de IA para autosuficiencia comercial
+              </p>
+            </div>
+            
+            <div class="sm:text-right shrink-0">
+              <div class="bg-[#f6f5f4] border border-[#e5e3df] rounded-lg px-3.5 py-2">
+                <span class="block text-xs uppercase tracking-wider font-semibold text-[#787671]">Estructura del programa</span>
+                <span class="text-sm font-semibold text-[#1a1a1a] flex items-center sm:justify-end gap-1.5 mt-0.5">
+                  <span class="w-2 h-2 rounded-full bg-[#5645d4]"></span>
+                  8 Semanas · 16 Sesiones de 60 min · Máx. 6 pers.
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mid Section: Value Pillars + 3 Step Implementation -->
+        <section class="slide-grid-mid grid grid-cols-1 lg:grid-cols-12 gap-4 mb-5">
+          
+          <!-- Left: 3 Value Pillars -->
+          <div class="slide-left-col lg:col-span-5 flex flex-col justify-between space-y-3">
+            <div class="text-xs font-semibold tracking-wider text-[#787671] uppercase flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-[#5645d4] rounded-full"></span>
+              Enfoque y Propuesta de Valor
+            </div>
+
+            <!-- Card 1: Tint Peach -->
+            <div class="bg-[#ffe8d4]/50 border border-[#e5e3df] rounded-lg p-3 flex items-start gap-3">
+              <div class="w-7 h-7 rounded bg-[#ffe8d4] text-[#793400] flex items-center justify-center shrink-0 text-sm font-bold mt-0.5">
+                🎯
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-[#1a1a1a]">Solución a 4 dolores de fondo</h4>
+                <p class="text-xs text-[#5d5b54] leading-relaxed mt-0.5">
+                  Intervención directa en: 1) Asignación de prospectos, 2) Integridad de reportes y métricas, 3) Inventario vivo y 4) Corridas paramétricas.
+                </p>
+              </div>
+            </div>
+
+            <!-- Card 2: Tint Mint -->
+            <div class="bg-[#d9f3e1]/50 border border-[#e5e3df] rounded-lg p-3 flex items-start gap-3">
+              <div class="w-7 h-7 rounded bg-[#d9f3e1] text-[#1aae39] flex items-center justify-center shrink-0 text-sm font-bold mt-0.5">
+                🛡️
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-[#1a1a1a]">Data Guards y blindaje de archivos</h4>
+                <p class="text-xs text-[#5d5b54] leading-relaxed mt-0.5">
+                  Separación estricta de captura y cálculo con permisos por rol. Eliminación del riesgo de pérdidas de información o desajustes accidentales.
+                </p>
+              </div>
+            </div>
+
+            <!-- Card 3: Tint Lavender -->
+            <div class="bg-[#e6e0f5]/50 border border-[#e5e3df] rounded-lg p-3 flex items-start gap-3">
+              <div class="w-7 h-7 rounded bg-[#e6e0f5] text-[#7b3ff2] flex items-center justify-center shrink-0 text-sm font-bold mt-0.5">
+                🤖
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-[#1a1a1a]">Autonomía asistida por IA</h4>
+                <p class="text-xs text-[#5d5b54] leading-relaxed mt-0.5">
+                  El equipo aprende a auditar y formular con IA como asistente operativo. Los asesores se dedican a vender, no a reparar hojas de cálculo.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: 3-Step Implementation -->
+          <div class="slide-right-col lg:col-span-7 flex flex-col justify-between">
+            <div class="text-xs font-semibold tracking-wider text-[#787671] uppercase flex items-center gap-1.5 mb-1.5">
+              <span class="w-1.5 h-1.5 bg-[#5645d4] rounded-full"></span>
+              Ruta de Implementación y Formación
+            </div>
+
+            <div class="slide-steps-grid grid grid-cols-1 sm:grid-cols-3 gap-3 h-full">
+              <!-- Step 1: Fase 1 -->
+              <div class="bg-[#fafaf9] border border-[#e5e3df] rounded-lg p-3.5 flex flex-col justify-between">
+                <div>
+                  <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-[#ffe8d4] text-[#793400] border border-[#e5e3df] mb-2">
+                    FASE 1 · 1 SEMANA · $4,200 MXN
+                  </span>
+                  <h5 class="text-sm font-bold text-[#1a1a1a] mb-1">Estabilización Técnica</h5>
+                  <p class="text-xs text-[#5d5b54] leading-relaxed">
+                    90 min de inmersión profunda + ~8 h de reingeniería técnica distribuidas en la primera semana. Saneamiento de reportes/métricas y base de asignación.
+                  </p>
+                </div>
+                <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-xs text-[#5645d4] font-medium">
+                  ✨ Archivos blindados desde día 1
+                </div>
+              </div>
+
+              <!-- Step 2: Fase 2 -->
+              <div class="bg-[#fafaf9] border border-[#e5e3df] rounded-lg p-3.5 flex flex-col justify-between">
+                <div>
+                  <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-[#dcecfa] text-[#005bab] border border-[#e5e3df] mb-2">
+                    FASE 2 · 8 SEMANAS
+                  </span>
+                  <h5 class="text-sm font-bold text-[#1a1a1a] mb-1">Retos de 60 Minutos</h5>
+                  <p class="text-xs text-[#5d5b54] leading-relaxed">
+                    16 sesiones de 1 h en células ágiles (4 a 6 pers.). Retos operacionales preparados con anticipación sobre flujos reales.
+                  </p>
+                </div>
+                <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-xs text-[#5d5b54] font-medium">
+                  💻 100% práctica y foco total
+                </div>
+              </div>
+
+              <!-- Step 3: Garantía -->
+              <div class="bg-[#fafaf9] border border-[#e5e3df] rounded-lg p-3.5 flex flex-col justify-between">
+                <div>
+                  <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-[#fde0ec] text-[#a02e6d] border border-[#e5e3df] mb-2">
+                    GARANTÍA INCLUIDA
+                  </span>
+                  <h5 class="text-sm font-bold text-[#1a1a1a] mb-1">Capacidad Instalada</h5>
+                  <p class="text-xs text-[#5d5b54] leading-relaxed">
+                    Sistemas vivos, gobernanza y adopción de IA. Incluye 4 h extra sin costo si se cumplen asistencia y retos.
+                  </p>
+                </div>
+                <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-xs text-[#7b3ff2] font-medium">
+                  🚀 Autosuficiencia asegurada
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- Bottom Section: Investment Table -->
+        <section>
+          <div class="text-xs font-semibold tracking-wider text-[#787671] uppercase flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-[#5645d4] rounded-full"></span>
+              Inversión Fase 2: Programa Formativo (8 Semanas · 16 Sesiones de 60 min)
+            </div>
+            <span class="text-xs font-normal text-[#787671] normal-case">
+              *Tarifa por sesión de 60 min por grupo
+            </span>
+          </div>
+
+          <!-- Responsive Notion Table -->
+          <div class="overflow-x-auto rounded-lg border border-[#e5e3df] bg-[#ffffff] shadow-sm">
+            <table class="w-full text-left text-xs sm:text-sm border-collapse min-w-[620px]">
+              <thead>
+                <tr class="border-b border-[#e5e3df] bg-[#f6f5f4] text-[#787671] text-xs uppercase font-semibold">
+                  <th class="py-2.5 px-3.5 sm:px-4">Modalidad Formativa</th>
+                  <th class="py-2.5 px-3 text-center">Tamaño de Grupo</th>
+                  <th class="py-2.5 px-3 text-center">Costo por Sesión (60 min)</th>
+                  <th class="py-2.5 px-3 text-center">Horas de Formación</th>
+                  <th class="py-2.5 px-3.5 sm:px-4 text-right font-semibold text-[#1a1a1a]">Total Formación (8 Semanas)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#ede9e4] text-[#37352f]">
+                <!-- Row 1: 4 personas -->
+                <tr class="hover:bg-[#fafaf9] transition-colors">
+                  <td class="py-2.5 px-3.5 sm:px-4 font-semibold text-[#1a1a1a] flex items-center gap-2">
+                    <span class="w-5 h-5 rounded text-xs bg-[#f0eeec] text-[#5d5b54] flex items-center justify-center font-bold shrink-0">1</span>
+                    Núcleo Clave
+                  </td>
+                  <td class="py-2.5 px-3 text-center text-[#5d5b54]">4 personas</td>
+                  <td class="py-2.5 px-3 text-center text-[#5d5b54] font-medium">$800 MXN</td>
+                  <td class="py-2.5 px-3 text-center text-[#787671]">16 hrs <span class="text-xs">(16 sesiones)</span></td>
+                  <td class="py-2.5 px-3.5 sm:px-4 text-right font-bold text-[#1a1a1a] text-sm sm:text-base">$12,800 MXN</td>
+                </tr>
+
+                <!-- Row 2: 6 personas -->
+                <tr class="hover:bg-[#fafaf9] transition-colors">
+                  <td class="py-2.5 px-3.5 sm:px-4 font-semibold text-[#1a1a1a] flex items-center gap-2">
+                    <span class="w-5 h-5 rounded text-xs bg-[#f0eeec] text-[#5d5b54] flex items-center justify-center font-bold shrink-0">2</span>
+                    Célula Operativa
+                  </td>
+                  <td class="py-2.5 px-3 text-center text-[#5d5b54]">Hasta 6 personas</td>
+                  <td class="py-2.5 px-3 text-center text-[#5d5b54] font-medium">$1,000 MXN</td>
+                  <td class="py-2.5 px-3 text-center text-[#787671]">16 hrs <span class="text-xs">(16 sesiones)</span></td>
+                  <td class="py-2.5 px-3.5 sm:px-4 text-right font-bold text-[#1a1a1a] text-sm sm:text-base">$16,000 MXN</td>
+                </tr>
+
+                <!-- Row 3: 2 Células -->
+                <tr class="hover:bg-[#fafaf9] transition-colors">
+                  <td class="py-2.5 px-3.5 sm:px-4 font-semibold text-[#1a1a1a] flex items-center gap-2">
+                    <span class="w-5 h-5 rounded text-xs bg-[#f0eeec] text-[#5d5b54] flex items-center justify-center font-bold shrink-0">3</span>
+                    Dos Células Simultáneas
+                  </td>
+                  <td class="py-2.5 px-3 text-center text-[#5d5b54]">Hasta 12 pers. <span class="text-xs text-[#787671]">(2 grupos máx 6)</span></td>
+                  <td class="py-2.5 px-3 text-center text-[#5d5b54] font-medium">$800 MXN <span class="text-xs text-[#787671]">c/u ($1,600 total)</span></td>
+                  <td class="py-2.5 px-3 text-center text-[#787671]">32 hrs <span class="text-xs">(16 h c/u)</span></td>
+                  <td class="py-2.5 px-3.5 sm:px-4 text-right font-bold text-[#1a1a1a] text-sm sm:text-base">$25,600 MXN</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Footer / Agreement Line -->
+          <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#e5e3df] text-xs">
+            <div class="text-[#787671] leading-relaxed">
+              *Fase 1: $4,200 MXN. Pagos: Fase 1 + 25% anticipo, y 25% en sem 3, 5 y 7. Garantía: 4 h extra sin costo (asistencia &ge;75% y 100% retos).
+            </div>
+            <div class="inline-flex items-center gap-1.5 text-[#37352f] font-medium bg-[#f6f5f4] border border-[#e5e3df] px-3 py-1 rounded-md self-start sm:self-auto shrink-0">
+              <span class="text-[#787671]">Próximo paso:</span>
+              <span class="font-semibold text-[#1a1a1a]">Selección de formato y agendar Fase 1</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TAB 2: DIAGNÓSTICO Y FASE 1                              -->
+  <!-- ======================================================== -->
+  <div id="view-diagnostico" class="w-full max-w-5xl px-4 sm:px-6 py-6 hidden">
+    
+    <!-- Title & Context -->
+    <div class="mb-6">
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#ffe8d4] text-[#793400] text-xs font-semibold mb-2">
+        <span>⚡</span> Intervención Técnica Previa
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold text-[#1a1a1a] tracking-tight">
+        Diagnóstico de Operación y Estabilización Técnica (Fase 1)
+      </h2>
+      <p class="text-sm text-[#5d5b54] mt-1 leading-relaxed">
+        Intervención técnica directa sobre los archivos actuales de la agencia para sanear la información antes de iniciar las clases formativas de la Fase 2.
+      </p>
+    </div>
+
+    <!-- 4 Pain Points Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      
+      <!-- Pain 1 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium px-2 py-0.5 rounded bg-[#fef7d6] text-[#793400] border border-[#f5d75e]/60">
+            Foco Secundario en Fase 1
+          </span>
+          <span class="text-xs text-[#a4a097] font-mono">Dolor #1</span>
+        </div>
+        <h3 class="text-sm font-bold text-[#1a1a1a]">Asignación de Leads (CPF y Asesores)</h3>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          <strong class="text-[#1a1a1a]">Causa raíz:</strong> Reglas estáticas en Sheets que no ponderan horarios de atención de los asesores ni la carga activa acumulada (desbalance de 30 leads vs 10).
+        </p>
+        <p class="text-xs text-[#787671] mt-1">
+          <strong class="text-[#5d5b54]">Impacto:</strong> Clientes desatendidos, fricción entre brokers y pérdida de cierres comerciales en Low Funnel.
+        </p>
+      </div>
+
+      <!-- Pain 2 -->
+      <div class="bg-[#ffffff] border-2 border-[#5645d4]/40 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-[#e6e0f5] text-[#391c57] border border-[#d6b6f6]">
+            Foco Principal en Fase 1
+          </span>
+          <span class="text-xs text-[#5645d4] font-mono font-semibold">Dolor #2 (Crítico)</span>
+        </div>
+        <h3 class="text-sm font-bold text-[#1a1a1a]">Reportes y Métricas Operacionales</h3>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          <strong class="text-[#1a1a1a]">Causa raíz:</strong> Fragilidad estructural y desconexión entre la captura manual y los tableros. Vulnerabilidad de fórmulas heredadas que provocan pérdidas de información.
+        </p>
+        <p class="text-xs text-[#787671] mt-1">
+          <strong class="text-[#5d5b54]">Impacto:</strong> Ceguera gerencial; imposibilidad de medir conversión real, proyectar ingresos o tomar decisiones con datos fiables.
+        </p>
+      </div>
+
+      <!-- Pain 3 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium px-2 py-0.5 rounded bg-[#f6f5f4] text-[#5d5b54] border border-[#e5e3df]">
+            Módulo Formativo
+          </span>
+          <span class="text-xs text-[#a4a097] font-mono">Dolor #3</span>
+        </div>
+        <h3 class="text-sm font-bold text-[#1a1a1a]">Gestión de Inventario Dinámico</h3>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          <strong class="text-[#1a1a1a]">Causa raíz:</strong> Ausencia de un inventario único con trazabilidad de estatus vivo (libre, apartado, en contrato, rentado o vendido).
+        </p>
+        <p class="text-xs text-[#787671] mt-1">
+          <strong class="text-[#5d5b54]">Impacto:</strong> Tiempo perdido verificando estatus con propietarios y riesgo de colocar propiedades ya apartadas.
+        </p>
+      </div>
+
+      <!-- Pain 4 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium px-2 py-0.5 rounded bg-[#f6f5f4] text-[#5d5b54] border border-[#e5e3df]">
+            Módulo Formativo
+          </span>
+          <span class="text-xs text-[#a4a097] font-mono">Dolor #4</span>
+        </div>
+        <h3 class="text-sm font-bold text-[#1a1a1a]">Corridas Financieras Paramétricas</h3>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          <strong class="text-[#1a1a1a]">Causa raíz:</strong> Plantillas fijas y rígidas que se desarticulan cuando un prospecto solicita variar plazos, enganches o mensualidades.
+        </p>
+        <p class="text-xs text-[#787671] mt-1">
+          <strong class="text-[#5d5b54]">Impacto:</strong> Demora al entregar propuestas a inversionistas y aspecto improvisado en plena negociación.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Phase 1 Detailed Scope Card -->
+    <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-6 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#ede9e4] pb-4 mb-4">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-[#5645d4]">Alcance Técnico Detallado</span>
+          <h3 class="text-base font-bold text-[#1a1a1a] mt-0.5">Fase 1: Estabilización Técnica y Blindaje de Archivos</h3>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-[#787671] block font-medium">Inversión única Fase 1</span>
+          <span class="text-2xl font-bold text-[#1a1a1a]">$4,200 MXN</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-[#5d5b54]">
+        <div class="space-y-3">
+          <div class="flex items-start gap-2.5">
+            <span class="text-[#1aae39] font-bold text-sm">✓</span>
+            <div>
+              <strong class="text-[#1a1a1a]">Sesiones de Inmersión Operativa (90 min):</strong> Espacio de comprensión profunda con Andie y líderes de operación para analizar el uso real de la herramienta y mapear el flujo de datos.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="text-[#1aae39] font-bold text-sm">✓</span>
+            <div>
+              <strong class="text-[#1a1a1a]">~8 Horas de Reingeniería Técnica Directa (1ª Semana):</strong> Detección precisa de fallas en fórmulas de extracción y vinculaciones rotas que provocan pérdidas de información, distribuidas a lo largo de la primera semana de intervención.
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-start gap-2.5">
+            <span class="text-[#1aae39] font-bold text-sm">✓</span>
+            <div>
+              <strong class="text-[#1a1a1a]">Foco Primario y Secundario:</strong> Solución inmediata al sistema de <span class="text-[#5645d4] font-semibold">Reportes y Métricas</span> (dolor #1) y estabilización de la <span class="text-[#5645d4] font-semibold">Base de Asignación</span> (dolor #2).
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="text-[#1aae39] font-bold text-sm">✓</span>
+            <div>
+              <strong class="text-[#1a1a1a]">Implementación de Data Guards:</strong> Separación estructural entre Captura, Lógica y Tableros. Protección de rangos para evitar desconfiguraciones accidentales.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TAB 3: PROGRAMA FORMATIVO Y GARANTÍA                     -->
+  <!-- ======================================================== -->
+  <div id="view-programa" class="w-full max-w-5xl px-4 sm:px-6 py-6 hidden">
+    
+    <!-- Title & Context -->
+    <div class="mb-6">
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#dcecfa] text-[#005bab] text-xs font-semibold mb-2">
+        <span>📘</span> Autonomía Operativa con IA
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold text-[#1a1a1a] tracking-tight">
+        Fase 2: Programa Formativo de 8 Semanas (16 Sesiones de 60 min)
+      </h2>
+      <p class="text-sm text-[#5d5b54] mt-1 leading-relaxed">
+        Metodología ágil basada en retos prediseñados, resolución activa en pantalla compartida y adopción de IA como asistente operativo permanente.
+      </p>
+    </div>
+
+    <!-- 4 Modules Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      
+      <!-- Module 1 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold uppercase text-[#5645d4]">Semanas 1 y 2 · 4 horas</span>
+          <span class="text-xs text-[#a4a097] font-mono">Módulo 1</span>
+        </div>
+        <h4 class="text-sm font-bold text-[#1a1a1a]">Arquitectura Limpia, Data Guards y Enrutamiento</h4>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          Bases de datos operativas limpias, configuración de permisos y rangos protegidos, y matrices de asignación equitativa considerando turnos y capacidad activa.
+        </p>
+        <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-[11px] text-[#5645d4] font-medium">
+          🤖 <strong>Uso de IA:</strong> Estructuración y depuración de lógica condicional con prompts.
+        </div>
+      </div>
+
+      <!-- Module 2 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold uppercase text-[#5645d4]">Semanas 3 y 4 · 4 horas</span>
+          <span class="text-xs text-[#a4a097] font-mono">Módulo 2</span>
+        </div>
+        <h4 class="text-sm font-bold text-[#1a1a1a]">Consolidación Confiable, Integridad y Métricas</h4>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          Consolidación dinámica sin roturas al insertar datos, tableros ejecutivos de conversión comercial (CPF &rarr; Asesor), tiempos de cierre y valor de cartera.
+        </p>
+        <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-[11px] text-[#5645d4] font-medium">
+          🤖 <strong>Uso de IA:</strong> Consultas de análisis en lenguaje natural y lectura de tendencias mensuales.
+        </div>
+      </div>
+
+      <!-- Module 3 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold uppercase text-[#5645d4]">Semanas 5 y 6 · 4 horas</span>
+          <span class="text-xs text-[#a4a097] font-mono">Módulo 3</span>
+        </div>
+        <h4 class="text-sm font-bold text-[#1a1a1a]">Control Centralizado de Inventario Dinámico</h4>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          Maestro de propiedades, estandarización de catálogos, vinculación relacional prospecto-inmueble y semaforización automática de estatus vivos.
+        </p>
+        <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-[11px] text-[#5645d4] font-medium">
+          🤖 <strong>Uso de IA:</strong> Generación automática de fichas comerciales y resúmenes para clientes.
+        </div>
+      </div>
+
+      <!-- Module 4 -->
+      <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold uppercase text-[#5645d4]">Semanas 7 y 8 · 4 horas</span>
+          <span class="text-xs text-[#a4a097] font-mono">Módulo 4</span>
+        </div>
+        <h4 class="text-sm font-bold text-[#1a1a1a]">Corridas Paramétricas y Protocolo de Autosuficiencia</h4>
+        <p class="text-xs text-[#5d5b54] mt-1.5 leading-relaxed">
+          Calculadoras adaptables a plazos flexibles y esquemas de pago. Protocolo de auditoría para resolver fallas en Sheets sin programador externo.
+        </p>
+        <div class="mt-2.5 pt-2 border-t border-[#ede9e4] text-[11px] text-[#5645d4] font-medium">
+          🤖 <strong>Uso de IA:</strong> Configuración de un asistente IA como copiloto permanente para fórmulas.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Commercial Policies, Milestone Payments & Guarantee -->
+    <div class="space-y-4">
+      
+      <!-- Guarantee Card -->
+      <div class="bg-[#ffffff] border border-[#5645d4]/40 rounded-xl p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🛡️</span>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#1a1a1a]">
+              Garantía de Capacidad Instalada (4 Horas Sin Costo)
+            </h4>
+          </div>
+          <span class="text-[10.5px] font-medium px-2 py-0.5 bg-[#e6e0f5] text-[#391c57] rounded-md">
+            Compromiso de Autosuficiencia
+          </span>
+        </div>
+        <p class="text-xs text-[#5d5b54] leading-relaxed">
+          Si al finalizar el programa el equipo o algún integrante no ha adquirido el <strong class="text-[#1a1a1a]">sello de capacidad instalada</strong>, se impartirán <strong class="text-[#5645d4]">4 horas adicionales de mentoría técnica sin costo alguno</strong>.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-[#ede9e4] text-[11px] text-[#787671]">
+          <div class="flex items-start gap-2">
+            <span class="text-[#1aae39] font-bold">✓</span>
+            <span><strong class="text-[#37352f]">Requisitos de validez:</strong> Asistencia mínima del <strong>75%</strong> y entrega del <strong>100% de los retos prácticos</strong> solicitados.</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="text-[#5645d4] font-bold">✓</span>
+            <span><strong class="text-[#37352f]">Alcance pedagógico:</strong> Exclusivamente para afianzar los temas vistos en el temario mediante mecánicas y dinámicas didácticas alternativas.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment & Rescheduling Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Milestone Payments -->
+        <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-[#1a1a1a] mb-2.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#5645d4]"></span>
+            Esquema de Pagos por Hitos (4 Momentos)
+          </h4>
+          <ul class="space-y-2 text-xs text-[#5d5b54]">
+            <li class="flex items-center justify-between p-2 bg-[#f6f5f4] rounded-lg border border-[#e5e3df]">
+              <span><strong class="text-[#1a1a1a]">1. Arranque:</strong> Fase 1 ($4,200 MXN) + 25% Fase 2</span>
+              <span class="text-[#5645d4] font-semibold text-[11px]">Día 1</span>
+            </li>
+            <li class="flex items-center justify-between p-2 bg-[#f6f5f4] rounded-lg border border-[#e5e3df]">
+              <span><strong class="text-[#1a1a1a]">2. Segundo Hito:</strong> 25% Fase 2</span>
+              <span class="text-[#787671] font-medium text-[11px]">Inicio Semana 3</span>
+            </li>
+            <li class="flex items-center justify-between p-2 bg-[#f6f5f4] rounded-lg border border-[#e5e3df]">
+              <span><strong class="text-[#1a1a1a]">3. Tercer Hito:</strong> 25% Fase 2</span>
+              <span class="text-[#787671] font-medium text-[11px]">Inicio Semana 5</span>
+            </li>
+            <li class="flex items-center justify-between p-2 bg-[#f6f5f4] rounded-lg border border-[#e5e3df]">
+              <span><strong class="text-[#1a1a1a]">4. Cuarto Hito:</strong> 25% final Fase 2</span>
+              <span class="text-[#787671] font-medium text-[11px]">Inicio Semana 7</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Operational Policies -->
+        <div class="bg-[#ffffff] border border-[#e5e3df] rounded-xl p-4 shadow-sm flex flex-col justify-between">
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#1a1a1a] mb-2.5 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0075de]"></span>
+              Políticas de Reprogramación y Grabaciones
+            </h4>
+            <div class="space-y-3 text-xs text-[#5d5b54]">
+              <p class="leading-relaxed">
+                <strong class="text-[#1a1a1a]">📅 Reprogramación flexible:</strong> Las sesiones pueden reprogramarse con un mínimo de <strong class="text-[#5645d4]">8 horas de anticipación</strong>, acordando un nuevo horario conveniente para ambas partes.
+              </p>
+              <p class="leading-relaxed">
+                <strong class="text-[#1a1a1a]">🎥 Grabaciones asíncronas:</strong> Si un asesor debe atender una visita de cierre comercial imprevista, la sesión queda grabada para su consulta posterior.
+              </p>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-[#ede9e4] text-[10.5px] text-[#787671]">
+            *Precios en MXN más IVA en caso de requerir comprobante fiscal CFDI.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 bg-[#1a1a1a] text-[#ffffff] text-xs py-2.5 px-4 rounded-lg shadow-xl transition-all duration-200 transform translate-y-20 opacity-0 pointer-events-none flex items-center gap-2.5 z-50">
+    <div class="w-4 h-4 rounded-full bg-[#1aae39] text-[#ffffff] flex items-center justify-center shrink-0 text-[10px] font-bold">
+      ✓
+    </div>
+    <span id="toastMessage">Operación realizada con éxito.</span>
+  </div>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      const tabs = ['resumen', 'diagnostico', 'programa'];
+      tabs.forEach(t => {
+        const view = document.getElementById('view-' + t);
+        const btn = document.getElementById('tabBtn-' + t);
+        if (t === tabId) {
+          view.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          view.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    const slide = document.getElementById('slideContent');
+    const btnPng = document.getElementById('btnExportPng');
+    const btnJpg = document.getElementById('btnExportJpg');
+    const btnPdf = document.getElementById('btnExportPdf');
+    const btnCopy = document.getElementById('btnCopyText');
+    const toast = document.getElementById('toastNotification');
+    const toastMessage = document.getElementById('toastMessage');
+
+    function showToast(msg) {
+      toastMessage.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    // Export to high-res PNG (ensuring standard crisp 16:9 canvas export)
+    btnPng.addEventListener('click', () => {
+      const originalText = btnPng.innerHTML;
+      btnPng.innerText = 'Generando PNG...';
+      btnPng.disabled = true;
+
+      slide.classList.add('export-mode-16-9');
+
+      htmlToImage.toPng(slide, {
+        quality: 1.0,
+        pixelRatio: 2,
+        backgroundColor: '#ffffff'
+      })
+      .then((dataUrl) => {
+        slide.classList.remove('export-mode-16-9');
+        const link = document.createElement('a');
+        link.download = 'Propuesta_Estabilizacion_Autonomia_Operativa.png';
+        link.href = dataUrl;
+        link.click();
+        btnPng.innerHTML = originalText;
+        btnPng.disabled = false;
+        showToast('PNG de alta resolución descargado.');
+      })
+      .catch((err) => {
+        slide.classList.remove('export-mode-16-9');
+        btnPng.innerHTML = originalText;
+        btnPng.disabled = false;
+        showToast('Hubo un error al generar la imagen.');
+      });
+    });
+
+    // Export to JPG
+    btnJpg.addEventListener('click', () => {
+      const originalText = btnJpg.innerHTML;
+      btnJpg.innerText = 'Generando JPG...';
+      btnJpg.disabled = true;
+
+      slide.classList.add('export-mode-16-9');
+
+      htmlToImage.toJpeg(slide, {
+        quality: 0.95,
+        pixelRatio: 2,
+        backgroundColor: '#ffffff'
+      })
+      .then((dataUrl) => {
+        slide.classList.remove('export-mode-16-9');
+        const link = document.createElement('a');
+        link.download = 'Propuesta_Estabilizacion_Autonomia_Operativa.jpg';
+        link.href = dataUrl;
+        link.click();
+        btnJpg.innerHTML = originalText;
+        btnJpg.disabled = false;
+        showToast('JPG descargado.');
+      })
+      .catch((err) => {
+        slide.classList.remove('export-mode-16-9');
+        btnJpg.innerHTML = originalText;
+        btnJpg.disabled = false;
+        showToast('Hubo un error al generar la imagen.');
+      });
+    });
+
+    // Export to PDF
+    btnPdf.addEventListener('click', () => {
+      const originalText = btnPdf.innerHTML;
+      btnPdf.innerText = 'Generando PDF...';
+      btnPdf.disabled = true;
+
+      slide.classList.add('export-mode-16-9');
+
+      htmlToImage.toJpeg(slide, {
+        quality: 0.98,
+        pixelRatio: 2,
+        backgroundColor: '#ffffff'
+      })
+      .then((dataUrl) => {
+        slide.classList.remove('export-mode-16-9');
+        
+        const { jsPDF } = window.jspdf;
+        // Landscape 16:9 presentation format (1280x720 px)
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'px',
+          format: [1280, 720]
+        });
+
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, 1280, 720);
+        pdf.save('Propuesta_Estabilizacion_Autonomia_Operativa.pdf');
+
+        btnPdf.innerHTML = originalText;
+        btnPdf.disabled = false;
+        showToast('PDF descargado con éxito.');
+      })
+      .catch((err) => {
+        slide.classList.remove('export-mode-16-9');
+        btnPdf.innerHTML = originalText;
+        btnPdf.disabled = false;
+        showToast('Hubo un error al generar el PDF.');
+      });
+    });
+
+    // Copy proposal summary text
+    btnCopy.addEventListener('click', () => {
+      const textToCopy = `PROGRAMA DE ESTABILIZACIÓN Y AUTONOMÍA OPERATIVA CON IA (Brokerage)
+
+FASE 1: Estabilización Técnica Previa ($4,200 MXN · 1 Semana)
+• 90 min de sesiones de inmersión operativa + ~8 h de reingeniería técnica directa distribuidas en la primera semana.
+• Foco Primario: Reportes y Métricas (detener la pérdida de información).
+• Foco Secundario: Estabilización de la Base de Asignación (CPF -> Asesores).
+• Implementación de Data Guards y rangos protegidos.
+
+FASE 2: Programa Formativo de Autonomía (8 Semanas · 16 Sesiones de 60 min)
+1. Núcleo Clave (4 personas):
+   - Tarifa: $800 MXN / sesión 60 min
+   - Inversión formación: $12,800 MXN (16 sesiones de 1 h)
+2. Célula Operativa (Hasta 6 personas):
+   - Tarifa: $1,000 MXN / sesión 60 min
+   - Inversión formación: $16,000 MXN (16 sesiones de 1 h)
+3. Dos Células Simultáneas (Hasta 12 personas en 2 grupos de máx. 6):
+   - Tarifa: $800 MXN / hora por grupo ($1,600 MXN / h combinada)
+   - Inversión formación: $25,600 MXN (32 h totales de impartición)
+
+ESQUEMA DE PAGOS:
+• Arranque: Costo Fase 1 ($4,200) + 25% de anticipo Fase 2.
+• Semana 3: 25% Fase 2.
+• Semana 5: 25% Fase 2.
+• Semana 7: 25% Fase 2.
+
+GARANTÍA DE CAPACIDAD INSTALADA:
+• Si al finalizar el equipo no adquiere el sello de capacidad instalada, se ofrecen 4 horas adicionales sin costo (asistencia mínima del 75% y 100% de retos entregados), dedicadas exclusivamente a reforzar los temas vistos mediante dinámicas pedagógicas alternativas.
+
+POLÍTICA DE REPROGRAMACIÓN:
+• Sesiones reprogramables con un mínimo de 8 horas de anticipación.`;
+
+      const tempInput = document.createElement('textarea');
+      tempInput.value = textToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      showToast('Resumen copiado al portapapeles.');
+    });
+  </script>
+</body>
+</html>
