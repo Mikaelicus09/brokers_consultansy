@@ -58,19 +58,21 @@
       transition: all 150ms ease;
     }
 
-    /* Forced 16:9 Canvas ONLY during image export */
+    /* Unclipped High-Res Canvas ONLY during image/PDF export */
     #slideContent.export-mode-16-9 {
       width: 1280px !important;
-      height: 720px !important;
       min-width: 1280px !important;
-      min-height: 720px !important;
       max-width: 1280px !important;
-      max-height: 720px !important;
-      padding: 2rem !important;
+      min-height: 720px !important;
+      height: auto !important;
+      max-height: none !important;
+      padding: 2.25rem !important;
       display: flex !important;
       flex-direction: column !important;
       justify-content: space-between !important;
       border-radius: 0 !important;
+      overflow: visible !important;
+      box-shadow: none !important;
     }
 
     #slideContent.export-mode-16-9 .slide-grid-mid {
@@ -206,7 +208,7 @@
 
     <!-- Fluid, fully responsive slide on mobile and tablet -->
     <main class="w-full">
-      <div id="slideContent" class="bg-[#ffffff] text-[#37352f] flex flex-col justify-between p-5 sm:p-7 rounded-xl border border-[#e5e3df] shadow-sm overflow-hidden">
+      <div id="slideContent" class="bg-[#ffffff] text-[#37352f] flex flex-col justify-between p-5 sm:p-7 rounded-xl border border-[#e5e3df] shadow-sm">
         
         <!-- Header -->
         <section class="border-b border-[#e5e3df] pb-4 mb-5">
@@ -776,7 +778,7 @@
       }, 3000);
     }
 
-    // Export to high-res PNG (ensuring standard crisp 16:9 canvas export)
+    // Export to high-res PNG (ensuring full unclipped canvas)
     btnPng.addEventListener('click', () => {
       const originalText = btnPng.innerHTML;
       btnPng.innerText = 'Generando PNG...';
@@ -838,7 +840,7 @@
       });
     });
 
-    // Export to PDF
+    // Export to PDF without clipping
     btnPdf.addEventListener('click', () => {
       const originalText = btnPdf.innerHTML;
       btnPdf.innerText = 'Generando PDF...';
@@ -854,20 +856,34 @@
       .then((dataUrl) => {
         slide.classList.remove('export-mode-16-9');
         
-        const { jsPDF } = window.jspdf;
-        // Landscape 16:9 presentation format (1280x720 px)
-        const pdf = new jsPDF({
-          orientation: 'landscape',
-          unit: 'px',
-          format: [1280, 720]
-        });
+        const img = new Image();
+        img.onload = () => {
+          const { jsPDF } = window.jspdf;
+          // Calculate PDF page size based on rendered image dimensions (pt units: 1pt = 1.333px at 96 DPI)
+          const pdfWidth = img.width * 0.75;
+          const pdfHeight = img.height * 0.75;
+          const orientation = pdfWidth >= pdfHeight ? 'landscape' : 'portrait';
 
-        pdf.addImage(dataUrl, 'JPEG', 0, 0, 1280, 720);
-        pdf.save('Propuesta_Estabilizacion_Autonomia_Operativa.pdf');
+          const pdf = new jsPDF({
+            orientation: orientation,
+            unit: 'pt',
+            format: [pdfWidth, pdfHeight]
+          });
 
-        btnPdf.innerHTML = originalText;
-        btnPdf.disabled = false;
-        showToast('PDF descargado con éxito.');
+          // Draw the image exactly matching page bounds without any clipping
+          pdf.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+          pdf.save('Propuesta_Estabilizacion_Autonomia_Operativa.pdf');
+
+          btnPdf.innerHTML = originalText;
+          btnPdf.disabled = false;
+          showToast('PDF descargado con éxito.');
+        };
+        img.onerror = () => {
+          btnPdf.innerHTML = originalText;
+          btnPdf.disabled = false;
+          showToast('Hubo un error al procesar el PDF.');
+        };
+        img.src = dataUrl;
       })
       .catch((err) => {
         slide.classList.remove('export-mode-16-9');
